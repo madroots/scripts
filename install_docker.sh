@@ -6,9 +6,6 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Docker Installation
-echo "Tailscale installed successfully, now proceeding with Docker installation."
-
 # Prompt the user to confirm Docker installation
 read -rp "Do you want to install Docker? (y/n): " confirmation
 
@@ -51,10 +48,11 @@ sudo curl -SL "https://github.com/docker/compose/releases/download/$latest_versi
 echo "Checking Docker Compose version:"
 sudo chmod +x /usr/local/bin/docker-compose && docker-compose --version
 
-# Add the current user to the docker group
-sudo usermod -aG docker "$(whoami)"
-
+# Add the current user to the docker group and reload group
+sudo usermod -aG docker $USER
+newgrp docker
 echo "Installation completed successfully."
+
 
 # Clean up
 rm get-docker.sh
