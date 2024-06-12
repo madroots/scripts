@@ -49,7 +49,7 @@ echo "Checking Docker Compose version:"
 sudo chmod +x /usr/local/bin/docker-compose && docker-compose --version
 
 # Add the current user to the docker group and reload group
-sudo usermod -aG docker $USER
+sudo usermod -aG docker "$(logname)"
 newgrp docker
 echo "Installation completed successfully."
 
