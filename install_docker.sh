@@ -29,12 +29,17 @@ html_content=$(curl -s "$compose_url")
 latest_version=$(echo "$html_content" | grep -oP '(?<=/docker/compose/releases/tag/)[^"]+' | head -n 1)
 arch=$(uname -m)
 
-mkdir -p /home/"$REAL_USER"/.docker/cli-plugins
-curl -SL "https://github.com/docker/compose/releases/download/$latest_version/docker-compose-linux-$arch" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+installed_version=$(/usr/local/bin/docker-compose version --short 2>/dev/null || echo "none")
 
-echo "✅ Docker Compose installed. Version:"
-docker-compose --version
+if [ "$installed_version" = "$latest_version" ]; then
+    echo "Docker Compose is already up to date (version $installed_version)."
+else
+    echo "Installing Docker Compose version $latest_version..."
+    curl -SL "https://github.com/docker/compose/releases/download/$latest_version/docker-compose-linux-$arch" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+    echo "Docker Compose installed. Version:"
+    docker-compose --version
+fi
 
 # Ensure docker group exists
 if ! getent group docker > /dev/null; then
