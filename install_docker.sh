@@ -48,11 +48,11 @@ sudo curl -SL "https://github.com/docker/compose/releases/download/$latest_versi
 echo "Checking Docker Compose version:"
 sudo chmod +x /usr/local/bin/docker-compose && docker-compose --version
 
-# Add the current user to the docker group and reload group
-sudo usermod -aG docker "$(logname)"
-newgrp docker
-echo "Installation completed successfully."
-
+if groups "$(logname)" | grep -qw docker; then
+    echo "User is already in the docker group."
+else
+    echo "Added user to the docker group. Please log out and back in (or reboot) to activate it."
+fi
 
 # Clean up
 rm get-docker.sh
