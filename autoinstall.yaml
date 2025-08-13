@@ -1,0 +1,26 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu-server
+    username: master
+    password: "$6$rounds=4096$SxB6..c1y8zLKlQK$VOpRTpQyWS0pHKf5v53Wbm4J2iS9YlVrwCJrrwD.6x5QXdwT6O2kUJd2yxyhdtMFys5cZ5ZXnZn.7mp1ihpTf0"  # 'admin' hashed with mkpasswd --method=SHA-512
+  ssh:
+    install-server: true
+    allow-pw: true
+  packages:
+    - curl
+    - git
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  timezone: Europe/Bratislava
+  storage:
+    layout:
+      name: lvm
+  updates: security
+  user-data:
+    disable_root: false
+  late-commands:
+    - curtin in-target --target=/target bash -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+    - curtin in-target --target=/target systemctl enable ssh
